@@ -7,6 +7,13 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ENV_FILE="${ELROBOT_ENV:-$ROOT/elrobot.env}"
+if [[ -f "$ENV_FILE" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
 STATION_DIR="${NORMA_CORE_ROOT:-${STATION_INSTALL_DIR:-$ROOT/norma-core}}"
 BIN_DIR="${STATION_DIR}/bin"
 STATION_BIN="${BIN_DIR}/station"
@@ -62,7 +69,8 @@ if [[ ! -x "$STATION_BIN" ]]; then
 fi
 
 cd "$BIN_DIR"
-# exec ./station --config "${STATION_CONFIG:-station.yaml}" --web --tcp "$@"
+# DATA_DIR="${STATION_DATA_DIR:-$BIN_DIR/station_data}"
+exec ./station --config "${STATION_CONFIG:-station.yaml}" --normfs-base-folder "$DATA_DIR" --web --tcp "$@"
 
 DATA_DIR="${STATION_DATA_DIR:-$BIN_DIR/station_data}"
 exec ./station --config "${STATION_CONFIG:-station.yaml}" --normfs-base-folder "$DATA_DIR" --web --tcp "$@"
