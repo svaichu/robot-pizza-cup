@@ -62,4 +62,8 @@ if [[ ! -x "$STATION_BIN" ]]; then
 fi
 
 cd "$BIN_DIR"
-exec ./station --config "${STATION_CONFIG:-station.yaml}" --web --tcp "$@"
+# exec ./station --config "${STATION_CONFIG:-station.yaml}" --web --tcp "$@"
+
+DATA_DIR="${STATION_DATA_DIR:-$BIN_DIR/station_data}"
+exec ./station --config "${STATION_CONFIG:-station.yaml}" --normfs-base-folder "$DATA_DIR" --web --tcp "$@"
+
